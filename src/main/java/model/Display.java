@@ -87,7 +87,7 @@ public class Display {
 
     public void getAllUsersH2(List<User> allUsers) {
         if (allUsers.size() > 0 || !allUsers.isEmpty()) {
-            allUsers.forEach((user) -> System.out.format("Listet alle brukere i H2: %d\t%s\t\t%s\t\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType()));
+            allUsers.forEach((user) -> System.out.format("Listet brukere i H2: \t%d\t%s\t\t%s\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType()));
         }else
             System.err.println("Databasen er tom! ");
     }

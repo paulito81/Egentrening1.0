@@ -32,6 +32,9 @@ public class UserService {
         display.createHeader();
     }
 
+
+
+
     /*
         ARRAYLIST
         CRUD OPPERATIONS
@@ -137,7 +140,6 @@ public class UserService {
 
     public List<User> getAllUsersH2() {
 
-        h2UserDAO = new H2UserDAO();
         display.getAllUsersH2(h2UserDAO.getAllUsers() );
 
         return h2UserDAO.getAllUsers();

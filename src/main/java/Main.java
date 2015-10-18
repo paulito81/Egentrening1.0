@@ -3,6 +3,8 @@ import model.Type;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
+import javax.enterprise.inject.Instance;
+
 /**
  * Created by Paul on 15.10.2015.
  */
@@ -22,11 +24,12 @@ public class Main {
     public static void main(String[] args) {
 
         WeldContainer container = new Weld().initialize();
-       // Instance<Main> main = container.instance().select(Main.class);
-       // main.get().callService();
-        UserService userService = container.instance().select(UserService.class).get();
+        Instance<UserService> inst = container.instance().select(UserService.class);
+        UserService userService = inst.get();
 
-       // createArrayList(userService);
+      //  UserService userService = container.instance().select(UserService.class).get();
+
+      //  createArrayList(userService);
         createH2(userService);
 
         container.instance().destroy(userService);
@@ -54,24 +57,22 @@ public class Main {
     public static void createH2(UserService userService) {
         System.out.println("-----H2 PRINTOUT:------");
 
-        userService.createUserH2(20, "ola@yahoo.no", "passord8", Type.STUDENT);
-        userService.createUserH2(21, "Gun@yahoo.no", "passord2", Type.TEACHER);
-        userService.createUserH2(22, "kei@yahoo.no", "passord3", Type.STUDENT);
-        userService.createUserH2(23, "lars@yahoo.no", "passord4", Type.TEACHER);
-        userService.createUserH2(24, "silje@yahoo.no", "passord5", Type.STUDENT);
-        System.out.println("\n");
-       // userService.closeConnection();
-        userService.getAllUsersH2();
-      /*
-        System.out.println("\n");
-        userService.updateUserH2(new User(20, "Gun@yahoo.no", "passordrr", Type.STUDENT));
-        userService.getUserByIDH2(20);
-        System.out.println("\n");
+        userService.createUserH2(3, "ola@yahoo.no", "passord8", Type.STUDENT);
+        userService.createUserH2(4, "Gun@yahoo.no", "passord2", Type.TEACHER);
+        userService.createUserH2(5, "kei@yahoo.no", "passord3", Type.STUDENT);
+        userService.createUserH2(6, "lars@yahoo.no", "passord4", Type.TEACHER);
+        userService.createUserH2(7, "silje@yahoo.no", "passord5", Type.STUDENT);
 
-        userService.getAllUsersH2();
         System.out.println("\n");
-        userService.deleteAUser(20);
-        */
+        userService.getAllUsersH2();
+
+
+      //  userService.updateUserH2(new User(20, "Gun@yahoo.no", "passordrr", Type.STUDENT));
+       // userService.getUserByIDH2(20);
+      //  userService.getAllUsersH2();
+        System.out.println("\n");
+   //     userService.deleteAUser(20);
+
        // userService.getAllUsersH2();
 
        // userService.closeConnection();

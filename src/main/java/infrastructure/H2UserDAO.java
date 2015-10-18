@@ -2,10 +2,7 @@ package infrastructure;
 
 import model.Type;
 import model.User;
-import org.h2.tools.RunScript;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +16,7 @@ public class H2UserDAO implements UserDAO {
 
     private static Connection connection;
 
+
     public H2UserDAO() {
         connectToH2();
     }
@@ -27,17 +25,22 @@ public class H2UserDAO implements UserDAO {
 
         try {
             Class.forName("org.h2.Driver");
+            connection = DriverManager.getConnection("jdbc:h2:mem:userDB;INIT=runscript from 'init.sql'", "sa", "");
+            /*
             connection = DriverManager.getConnection("jdbc:h2:mem:userDB", "sa", "");
             RunScript.execute(connection, new FileReader("init.sql"));
 
+             */
+
         } catch (ClassNotFoundException | SQLException e) {
             throw new IllegalStateException(e);
-        } catch (FileNotFoundException e) {
+        } /*catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        */
     }
 
-    public synchronized void closeConnectionToH2() {
+    public  void closeConnectionToH2() {
         try {
             connection.close();
         } catch (SQLException e) {
@@ -59,6 +62,7 @@ public class H2UserDAO implements UserDAO {
             preparedStatement.setString(3, user.getWorkType().name());
 
             preparedStatement.executeUpdate();
+            preparedStatement.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -90,13 +94,12 @@ public class H2UserDAO implements UserDAO {
                 if (rows != 1) {
                     throw new IllegalStateException("Wrong number of updated rows! " + rows + "\nID: " + user.getId());
                 }
+                preparedStatement.close();
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
 
-
                 return false;
-
             }
         }
         return false;
@@ -116,15 +119,13 @@ public class H2UserDAO implements UserDAO {
 
          while(resultSet.next()) {
 
-            user.setId(resultSet.getInt("ID"));
-            user.setEmail(resultSet.getString("EMAIL"));
-            user.setPassword(resultSet.getString("PASSWORD"));
-            user.setWorkType(Type.valueOf(resultSet.getString("TYPE")));
+             user.setId(resultSet.getInt("ID"));
+             user.setEmail(resultSet.getString("EMAIL"));
+             user.setPassword(resultSet.getString("PASSWORD"));
+             user.setWorkType(Type.valueOf(resultSet.getString("TYPE")));
 
          }
-
-
-
+            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -150,6 +151,8 @@ public class H2UserDAO implements UserDAO {
 
                 userList.add(user);
             }
+
+            preparedStatement.close();
             return userList;
 
         } catch (SQLException e) {
@@ -172,6 +175,7 @@ public class H2UserDAO implements UserDAO {
             if (rows != 1) {
                 throw new IllegalStateException("Wrong number of updated rows! " + rows + "\nID: " + id);
             }
+            preparedStatement.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -181,19 +185,25 @@ public class H2UserDAO implements UserDAO {
 
     public boolean dropTable(String tableName) {
         String dropTable = "DROP TABLE IF EXISTS " + tableName;
+        boolean rows = true;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(dropTable)) {
 
-            boolean rows = preparedStatement.execute();
+            int row = preparedStatement.executeUpdate();
+            rows = preparedStatement.execute();
 
-            if (!rows) {
-                throw new IllegalStateException("No table found by the name of... ´" + tableName + "´\nTablename: " + dropTable);
+            if( rows) {
+                System.out.printf("Table " + tableName + " where dropped.\t " + row + " where deleted");
             }
-
+            preparedStatement.close();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        if (!rows) {
+            throw new IllegalStateException("No table found by the name of... ´" + tableName + "´\nTablename: " + dropTable);
+        }
         return false;
     }
+
 }
