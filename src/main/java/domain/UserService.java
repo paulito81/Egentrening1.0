@@ -121,7 +121,7 @@ public class UserService {
 
     public boolean updateUserH2(User user) {
         if (user != null) {
-            H2UserDAO h2UserDAO = new H2UserDAO();
+
             h2UserDAO.updateUser(user);
             display.updateUserH2(user);
             return true;
@@ -131,7 +131,6 @@ public class UserService {
 
     public Optional<User> getUserByIDH2(int id) {
         if (id != 0) {
-            H2UserDAO h2UserDAO = new H2UserDAO();
             display.getUserByIdH2(h2UserDAO.getUserById(id));
             return h2UserDAO.getUserById(id);
         } else
@@ -148,7 +147,7 @@ public class UserService {
 
     public boolean deleteAUserH2(int id) {
         display.deleteUserH2(id);
-        return id != 0 && userDAO.deleteUser(id);
+        return id != 0 && h2UserDAO.deleteUser(id);
     }
 
     public void dropTable(String tableName) {

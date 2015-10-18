@@ -66,21 +66,21 @@ public class Display {
 
     public void updateUserH2(User user) {
         if (user !=null) {
-            System.out.format("Bruker er oppdatert H2.\t\t %s\t\t%s\t\t%s\n", user.getEmail(), user.getPassword(), user.getWorkType());
+            System.err.format("Oppdatert bruker i H2:\t%s\t%s\t\t%s\t%s\n", user.getId() , user.getEmail(), user.getPassword(), user.getWorkType());
         }else
             System.err.println("Ingen bruker ble oppdater , ingen bruker ble funnet..");
     }
 
     public void getUserByIdH2(Optional<User> userById) {
         if (userById.isPresent()) {
-            System.out.println("Funnet bruker H2:" + "ID:" + userById.get().getId() + "\tEpost: " + userById.get().getEmail() + "\tPassord:" + userById.get().getPassword() + "\tJobbtype" + userById.get().getWorkType());
+            System.out.format("Funnet bruker i H2:\t\t%s\t%s\t\t%s\t%s\n", userById.get().getId(), userById.get().getEmail(), userById.get().getPassword(), userById.get().getWorkType());
         }else
             System.err.println("Ingen bruker ble funnet med det id nummeret");
     }
 
     public void deleteUserH2(int id) {
         if (id != 0) {
-            System.out.println("Bruker slettet via H2 med id: " + id);
+            System.err.println("Bruker har blitt slettet fra H2 med id: " + id );
         }else
             System.out.println("Ingen bruker kunne slettes.. ");
     }

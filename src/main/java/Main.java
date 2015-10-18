@@ -1,5 +1,6 @@
 import domain.UserService;
 import model.Type;
+import model.User;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
@@ -65,17 +66,12 @@ public class Main {
 
         System.out.println("\n");
         userService.getAllUsersH2();
-
-
-      //  userService.updateUserH2(new User(20, "Gun@yahoo.no", "passordrr", Type.STUDENT));
-       // userService.getUserByIDH2(20);
-      //  userService.getAllUsersH2();
+        userService.updateUserH2(new User(2, "Gun@yahoo.no", "passordrr", Type.STUDENT));
+        userService.getUserByIDH2(4);
         System.out.println("\n");
-   //     userService.deleteAUser(20);
+        userService.deleteAUserH2(4);
+        userService.getAllUsersH2();
 
-       // userService.getAllUsersH2();
-
-       // userService.closeConnection();
     }
 
 }
