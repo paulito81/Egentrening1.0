@@ -30,14 +30,15 @@ public class Main {
 
       //  UserService userService = container.instance().select(UserService.class).get();
 
-      //  createArrayList(userService);
+        createArrayList(userService);
+        System.out.println("---------------------------------------------------------------------\n");
         createH2(userService);
 
         container.instance().destroy(userService);
     }
 
     public static void createArrayList(UserService userService) {
-        System.out.println("<<<<<<ARRAYLIST PRINTOUT:>>>>>>");
+        System.out.println("--------ARRAYLIST PRINTOUT:-------------------------------------");
         userService.createUser(1, "ola@yahoo.no", "passord8", Type.STUDENT);
         userService.createUser(2, "Gun@yahoo.no", "passord2", Type.TEACHER);
         userService.createUser(3, "kei@yahoo.no", "passord3", Type.STUDENT);
@@ -56,7 +57,7 @@ public class Main {
         //  userService.getAllUsers();
     }
     public static void createH2(UserService userService) {
-        System.out.println("-----H2 PRINTOUT:------");
+        System.out.println("-----H2 PRINTOUT:-----------------------------------------------");
 
         userService.createUserH2(3, "ola@yahoo.no", "passord8", Type.STUDENT);
         userService.createUserH2(4, "Gun@yahoo.no", "passord2", Type.TEACHER);

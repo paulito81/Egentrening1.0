@@ -28,8 +28,8 @@ public class UserService {
 
     UserService() {
         h2UserDAO = new H2UserDAO();
-        arrayUserDAO = new ArrayUserDAO();
         display.createHeader();
+        arrayUserDAO = new ArrayUserDAO();
     }
 
 

@@ -8,13 +8,13 @@ import java.util.Optional;
  */
 public class Display {
     public void createHeader(){
-        System.out.println("\n\t\t\t\t\t\tID\tEPOST\t\t\t\tPASSORD\t\tJOBBTYPE\n******************************************************************");
+        System.out.println("\n\t\t\t\t  ID\tEPOST\t\t\t\tPASSORD\t\t\tJOBBTYPE\n******************************************************************");
     }
 
     public void createUser(User user){
 
         if(user !=null ) {
-            System.out.format("Opprettet bruker: %d\t%s\t\t%s\t\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType());
+            System.out.format("Opprettet bruker: %d\t\t%s\t\t%s\t\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType());
         }else
             System.err.println("Feil ingen bruker ble opprette.. ");
     }
@@ -38,7 +38,7 @@ public class Display {
     public void getAllUsers(List<User> allUsers) {
         if (!allUsers.isEmpty() || allUsers.size() > 0) {
         System.out.println("\n[Liste over alle brukere]:\n--------------------------------------------------------------");
-            allUsers.forEach((user) -> System.out.format("%d\t%s\t\t%s\t\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType()));
+            allUsers.forEach((user) -> System.out.format("\t\t\t\t  %d\t\t%s\t\t%s\t\t%s\n", user.getId(), user.getEmail(), user.getPassword(), user.getWorkType()));
         }else
             System.err.println("Listen er tom..");
     }
