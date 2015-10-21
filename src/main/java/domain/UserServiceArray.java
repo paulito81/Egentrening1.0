@@ -11,28 +11,38 @@ import java.util.Optional;
 /**
  * Created by Paul on 15.10.2015.
  */
-public class UserService {
+public class UserServiceArray {
 
-
-    @H2DAOQualifier
-    H2UserDAO h2UserDAO;
 
     @ArrayListQualifier
-    ArrayUserDAO arrayUserDAO;
-
-    UserDAO userDAO;
+    final ArrayUserDAO arrayUserDAO;
 
     //PRINT OUT
-    Display display = new Display();
+   private Display display = new Display();
 
 
-    UserService() {
-        h2UserDAO = new H2UserDAO();
+    UserServiceArray() {
         display.createHeader();
         arrayUserDAO = new ArrayUserDAO();
     }
 
+    public void execute() {
+        System.out.println("--------ARRAYLIST PRINTOUT:-------------------------------------");
+        createUser(1, "ola@yahoo.no", "passord8", Type.STUDENT);
+        createUser(2, "Gun@yahoo.no", "passord2", Type.TEACHER);
+        createUser(3, "kei@yahoo.no", "passord3", Type.STUDENT);
+        createUser(4, "lars@yahoo.no", "passord4", Type.TEACHER);
+        createUser(5, "silje@yahoo.no", "passord5", Type.STUDENT);
+        getAllUsers();
+        System.out.println("\n");
+        getUserByID(4);
+        updateUser(4, "erik@yahoo.no", "passord4", Type.STUDENT);
+        deleteAUser(4);
+        getAllUsers();
+        deleteArrayList();
+        System.out.println("---------------------------------------------------------------------\n");
 
+    }
 
 
     /*
@@ -64,7 +74,7 @@ public class UserService {
         if (id != 0 || email != null || password != null || workType != null) {
 
             User user = new User(id, email, password, workType);
-           // arrayUserDAO.updateUser(user);
+
             updateUser(user);
             return true;
         } else
@@ -96,70 +106,5 @@ public class UserService {
     public boolean deleteAUser(int id) {
         return arrayUserDAO.deleteUser(id);
     }
-
-
-    /*
-        H2DATABASE
-        CRUD OPERATIONS
-
-     */
-    public boolean createUserH2(int id, String email, String password, Type workType) {
-
-        if (id != 0 || email != null || password != null || workType != null) {
-            User user = new User(id, email, password, workType);
-
-            h2UserDAO.createUser(user);
-            if(!h2UserDAO.getAllUsers().isEmpty()) {
-                display.createUserH2(user);
-            }
-
-            return true;
-
-        } else
-            return false;
-    }
-
-    public boolean updateUserH2(User user) {
-        if (user != null) {
-
-            h2UserDAO.updateUser(user);
-            display.updateUserH2(user);
-            return true;
-        } else
-            return false;
-    }
-
-    public Optional<User> getUserByIDH2(int id) {
-        if (id != 0) {
-            display.getUserByIdH2(h2UserDAO.getUserById(id));
-            return h2UserDAO.getUserById(id);
-        } else
-            return null;
-    }
-
-    public List<User> getAllUsersH2() {
-
-        display.getAllUsersH2(h2UserDAO.getAllUsers() );
-
-        return h2UserDAO.getAllUsers();
-
-    }
-
-    public boolean deleteAUserH2(int id) {
-        display.deleteUserH2(id);
-        return id != 0 && h2UserDAO.deleteUser(id);
-    }
-
-    public void dropTable(String tableName) {
-
-        H2UserDAO h2UserDAO = new H2UserDAO();
-        h2UserDAO.dropTable(tableName);
-        display.dropTable(tableName);
-
-    }
-    public void closeConnection(){
-        h2UserDAO.closeConnectionToH2();
-    }
-
-
 }
+

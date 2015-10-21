@@ -3,6 +3,7 @@ package infrastructure;
 import model.Type;
 import model.User;
 
+import javax.enterprise.inject.Default;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Optional;
 /**
  * Created by Paul on 15.10.2015.
  */
-@H2DAOQualifier
+@Default
 public class H2UserDAO implements UserDAO {
 
     private static Connection connection;
@@ -26,18 +27,11 @@ public class H2UserDAO implements UserDAO {
         try {
             Class.forName("org.h2.Driver");
             connection = DriverManager.getConnection("jdbc:h2:mem:userDB;INIT=runscript from 'init.sql'", "sa", "");
-            /*
-            connection = DriverManager.getConnection("jdbc:h2:mem:userDB", "sa", "");
-            RunScript.execute(connection, new FileReader("init.sql"));
 
-             */
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new IllegalStateException(e);
-        } /*catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
-        */
     }
 
     public  void closeConnectionToH2() {

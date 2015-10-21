@@ -94,7 +94,7 @@ public class Display {
 
     public void dropTable(String tableName) {
         if (!tableName.isEmpty()) {
-            System.out.println("Table: " + tableName + " where dropped!");
+            System.err.println("Tablename: '" + tableName + "´ where dropped!");
         }else
             System.err.println("Ingen tabell ble funnet..");
     }

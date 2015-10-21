@@ -3,18 +3,19 @@ package domainTest;
 import model.Type;
 import model.User;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Created by Paul on 15.10.2015.
  */
-public class UserServiceTest {
+public class UserServiceArrayTest {
     // user tests
-    User user1;
-    User user2;
-    User user3;
-    User user4;
+    private User user1;
+    private User user2;
+    private User user3;
+    private User user4;
 
     @Before
     public void setUp(){
@@ -39,11 +40,12 @@ public class UserServiceTest {
 
     @Test
     public void createUser() throws Exception {
-        //TODO return a user fields updated
+        user1 = new User(300,"peterpan@yahoo.no","123456789", Type.STUDENT );
+        Assert.assertEquals(String.valueOf(user1),"User{id=300, email='peterpan@yahoo.no', password='123456789', workType=STUDENT}");
     }
     @Test
     public void updateUser(){
-        //TODO return user fields updated
+    //TODO
     }
     @Test
     public void getUserByID(){

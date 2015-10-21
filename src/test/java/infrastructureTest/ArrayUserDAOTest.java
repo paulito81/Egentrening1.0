@@ -30,7 +30,7 @@ public class ArrayUserDAOTest {
 
     @Test
     public void tearDown() {
-
+        arrayUserDAO.deleteArray();
     }
 
     /**

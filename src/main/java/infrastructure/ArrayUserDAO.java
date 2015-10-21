@@ -10,16 +10,16 @@ import java.util.Optional;
 /**
  * Created by Paul on 15.10.2015.
  */
+@ArrayListQualifier
 public class ArrayUserDAO implements UserDAO{
 
 
-    List<User> listOfAllUsers = new ArrayList<>();
+    final List<User> listOfAllUsers = new ArrayList<>();
     Display display;
 
     public List<User> getListOfAllUsers() {
         return listOfAllUsers;
     }
-
 
     public ArrayUserDAO() {
         display = new Display();
@@ -72,8 +72,6 @@ public class ArrayUserDAO implements UserDAO{
                     return Optional.of(new User(u.getId(), u.getEmail(), u.getPassword(), u.getWorkType()));
                 }
             }
-           // listOfAllUsers.stream().filter(u -> u.getId() == u.getId()).forEach(display::updateUser);
-            // List<User> user2 = listOfAllUsers.stream().filter((l) -> l.getId() == id).collect(Collectors.toList());
 
             return Optional.of(new User(user.getId(), user.getEmail(), user.getPassword(), user.getWorkType()));
         }
@@ -84,7 +82,6 @@ public class ArrayUserDAO implements UserDAO{
     @Override
     public List<User> getAllUsers() {
         if(listOfAllUsers.size() > 1) {
-        //    listOfAllUsers.forEach(user -> System.out.println(user.getId() + " " + user.getEmail() + " " + user.getPassword() + " " + user.getWorkType()));
             display.getAllUsers(listOfAllUsers);
             return getListOfAllUsers();
         }
