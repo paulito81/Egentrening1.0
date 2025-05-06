@@ -1,8 +1,8 @@
 package model;
 
-import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by Paul on 15.10.2015.
@@ -12,7 +12,8 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "SEQ_USER", allocationSize = 1)
     private int id;
     @NotNull
     private String email;
@@ -21,6 +22,12 @@ public class User {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Type workType;
+
+    public User(String email, String password, Type workType){
+        this.email = email;
+        this.password = password;
+        this.workType = workType;
+    }
 
     public User(int id, String email, String password, Type workType) {
         this.id = id;

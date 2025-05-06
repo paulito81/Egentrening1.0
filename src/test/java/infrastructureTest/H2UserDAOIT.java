@@ -22,7 +22,6 @@ public class H2UserDAOIT {
 
     @Before
     public void setUp(){
-
         h2UserDAO = new H2UserDAO();
 
     }
@@ -33,9 +32,15 @@ public class H2UserDAOIT {
 
     @Test
     public void createANewUser(){
-        boolean created = h2UserDAO.createUser(new User(2,"ole@yahoo.no", "passord", Type.STUDENT));
-        Optional<User> user = h2UserDAO.getUserById(2);
-        System.out.println("1) Test opprettelse av ´ny bruker: \tID: " + user.get().getId() + "\tEpost: " + user.get().getEmail() + "\tPassord: "+ user.get().getPassword() + "\tJobb: " + user.get().getWorkType());
+        User user = new User("ole@yahoo.no", "passord", Type.STUDENT);
+        boolean created = h2UserDAO.createUser(user);
+        Optional<User> optionalUser = h2UserDAO.getUserById(2);
+        System.out.println(
+                "1) Test opprettelse av ´ny bruker: \tID: " +
+                        optionalUser.get().getId() + "\tEpost: " +
+                        optionalUser.get().getEmail() + "\tPassord: "+
+                        optionalUser.get().getPassword() + "\tJobb: " +
+                        optionalUser.get().getWorkType());
         Assert.assertTrue(created);
     }
 
@@ -61,11 +66,10 @@ public class H2UserDAOIT {
     }
     @Test
     public void getAllUsers(){
-
-        h2UserDAO.createUser(new User(2, "ole@yahoo.no", "passord0", Type.STUDENT));
-        h2UserDAO.createUser(new User(3, "per@yahoo.no", "passord2", Type.TEACHER));
-        h2UserDAO.createUser(new User(4, "knu@yahoo.no", "passord3", Type.TEACHER));
-        h2UserDAO.createUser(new User(5, "rut@yahoo.no", "passord4", Type.STUDENT));
+        h2UserDAO.createUser(new User( "ole@yahoo.no", "passord0", Type.STUDENT));
+        h2UserDAO.createUser(new User( "per@yahoo.no", "passord2", Type.TEACHER));
+        h2UserDAO.createUser(new User( "knu@yahoo.no", "passord3", Type.TEACHER));
+        h2UserDAO.createUser(new User( "rut@yahoo.no", "passord4", Type.STUDENT));
 
         for (User user : h2UserDAO.getAllUsers()) {
             System.out.println("4) Teste hente alle brukere´ \t\tID: " + user.getId()  + "\tEpost: " + user.getEmail()+ " Passord: "+ user.getPassword()+ "\tJobb: " + user.getWorkType());
@@ -77,10 +81,10 @@ public class H2UserDAOIT {
     @Test
     public void getAllUsersIsCopied(){
         List<User> listOfUsers = new ArrayList<>();
-        h2UserDAO.createUser(new User(2, "ole@yahoo.no", "passord0", Type.STUDENT));
-        h2UserDAO.createUser(new User(3, "per@yahoo.no", "passord2", Type.TEACHER));
-        h2UserDAO.createUser(new User(4, "knu@yahoo.no", "passord3", Type.TEACHER));
-        h2UserDAO.createUser(new User(5, "rut@yahoo.no", "passord4", Type.STUDENT));
+        h2UserDAO.createUser(new User( "ole@yahoo.no", "passord0", Type.STUDENT));
+        h2UserDAO.createUser(new User( "per@yahoo.no", "passord2", Type.TEACHER));
+        h2UserDAO.createUser(new User("knu@yahoo.no", "passord3", Type.TEACHER));
+        h2UserDAO.createUser(new User("rut@yahoo.no", "passord4", Type.STUDENT));
 
         listOfUsers.addAll(h2UserDAO.getAllUsers().stream().collect(Collectors.toList()));
         System.out.println("5) Teste at størrelsen på fil er like stor som den som ble kopiert\t\tH2-DB:  " + h2UserDAO.getAllUsers().size() +"\tLokal List<User>: " + listOfUsers.size());
@@ -91,20 +95,20 @@ public class H2UserDAOIT {
 
     @Test
     public void deleteAUser() {
-        Optional<User> user;
-        user = h2UserDAO.getUserById(1);
-        boolean isDeleted = h2UserDAO.deleteUser(1);
-        System.out.println("6) Sletter bruker med id: \t\t\tID: " + user.get().getId() + "\tEpost: " + user.get().getEmail() + "\tPassord: " + user.get().getPassword() + "\tJobb: " + user.get().getWorkType() + "\t -> :H2 størrelse: " + h2UserDAO.getAllUsers().size());
+        h2UserDAO.createUser(new User( 1,"ole@yahoo.no", "passord0", Type.STUDENT));
+        Optional<User> userOpt = h2UserDAO.getUserById(1);
+        userOpt.ifPresent(System.out::println);
 
-        Assert.assertTrue(isDeleted);
+        boolean deleted = h2UserDAO.deleteUser(1);
+        Assert.assertTrue(deleted);
     }
     @Test
     public void deleteTable(){
 
-        h2UserDAO.createUser(new User(20, "ole@yahoo.no", "passord0", Type.STUDENT));
-        h2UserDAO.createUser(new User(21, "per@yahoo.no", "passord2", Type.TEACHER));
-        h2UserDAO.createUser(new User(22, "knu@yahoo.no", "passord3", Type.TEACHER));
-        h2UserDAO.createUser(new User(23, "rut@yahoo.no", "passord4", Type.STUDENT));
+        h2UserDAO.createUser(new User("ole@yahoo.no", "passord0", Type.STUDENT));
+        h2UserDAO.createUser(new User( "per@yahoo.no", "passord2", Type.TEACHER));
+        h2UserDAO.createUser(new User( "knu@yahoo.no", "passord3", Type.TEACHER));
+        h2UserDAO.createUser(new User( "rut@yahoo.no", "passord4", Type.STUDENT));
 
         boolean isDeletedTable = h2UserDAO.dropTable("User");
         Assert.assertTrue(isDeletedTable);

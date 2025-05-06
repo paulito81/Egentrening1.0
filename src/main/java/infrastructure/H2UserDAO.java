@@ -26,7 +26,7 @@ public class H2UserDAO implements UserDAO {
 
         try {
             Class.forName("org.h2.Driver");
-            connection = DriverManager.getConnection("jdbc:h2:mem:userDB;INIT=runscript from 'init.sql'", "sa", "");
+            connection = DriverManager.getConnection("jdbc:h2:mem:userDB;INIT=runscript from 'db/init.sql'", "sa", "");
 
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -45,39 +45,41 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public synchronized boolean createUser(User user) {
+        String getNextIdSql = "SELECT NEXTVAL('SEQ_USER')";
+        String insertSql = "INSERT INTO \"USER\" (id, email, password, type) VALUES (?, ?, ?, ?)";
 
+        try (
+                Statement idStatement = connection.createStatement();
+                ResultSet rs = idStatement.executeQuery(getNextIdSql)
+        ) {
+            if (rs.next()) {
+                int nextId = rs.getInt(1);
 
-        String sqlInsert = "INSERT INTO USER VALUES(SEQ_USER.nextval, ?, ?, ?) ";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(insertSql)) {
+                    preparedStatement.setInt(1, nextId);
+                    preparedStatement.setString(2, user.getEmail());
+                    preparedStatement.setString(3, user.getPassword());
+                    preparedStatement.setString(4, user.getWorkType().name());
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlInsert)) {
-
-            preparedStatement.setString(1, user.getEmail());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setString(3, user.getWorkType().name());
-
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-
+                    preparedStatement.executeUpdate();
+                    user.setId(nextId);
+                    return true;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
 
-        return true;
-
+        return false;
     }
 
 
     @Override
     public synchronized boolean updateUser(User user) {
+        String sqlUpdate = "UPDATE \"USER\" SET email = ?, password = ?, type = ? WHERE id = ?";
 
-        String sqlUpdate = "UPDATE user SET email =?, password =?, type =? WHERE id =?";
-
-
-        if (user != null  ) {
-
+        if (user != null && user.getEmail() != null) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdate)) {
-
                 preparedStatement.setString(1, user.getEmail());
                 preparedStatement.setString(2, user.getPassword());
                 preparedStatement.setString(3, user.getWorkType().name());
@@ -88,12 +90,9 @@ public class H2UserDAO implements UserDAO {
                 if (rows != 1) {
                     throw new IllegalStateException("Wrong number of updated rows! " + rows + "\nID: " + user.getId());
                 }
-                preparedStatement.close();
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
-
-                return false;
             }
         }
         return false;
@@ -101,40 +100,34 @@ public class H2UserDAO implements UserDAO {
 
     @Override
     public synchronized Optional<User> getUserById(int id) {
-        User user = new User();
-
-        String getUserById = "SELECT * FROM user WHERE id = ?";
+        String getUserById = "SELECT * FROM \"USER\" WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(getUserById)) {
-
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            if (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getInt("id"));
+                user.setEmail(resultSet.getString("email"));
+                user.setPassword(resultSet.getString("password"));
+                user.setWorkType(Type.valueOf(resultSet.getString("type")));
+                return Optional.of(user);
+            }
 
-         while(resultSet.next()) {
-
-             user.setId(resultSet.getInt("ID"));
-             user.setEmail(resultSet.getString("EMAIL"));
-             user.setPassword(resultSet.getString("PASSWORD"));
-             user.setWorkType(Type.valueOf(resultSet.getString("TYPE")));
-
-         }
-            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            return Optional.empty();
         }
-        return Optional.of(user);
 
+        return Optional.empty();
     }
 
     @Override
     public synchronized List<User> getAllUsers() {
-        String listOfUserSQL = "SELECT * FROM user";
+        String listOfUserSQL = "SELECT * FROM \"USER\"";
         List<User> userList = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(listOfUserSQL)) {
-
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 User user = new User();
@@ -142,61 +135,45 @@ public class H2UserDAO implements UserDAO {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
                 user.setWorkType(Type.valueOf(resultSet.getString("type")));
-
                 userList.add(user);
             }
-
-            preparedStatement.close();
-            return userList;
-
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return userList;
 
     }
 
     @Override
     public synchronized boolean deleteUser(int id) {
-        String deleteUserSQL = "DELETE FROM user WHERE id = ?";
+        String deleteUserSQL = "DELETE FROM \"USER\" WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUserSQL)) {
-
             preparedStatement.setInt(1, id);
-
             int rows = preparedStatement.executeUpdate();
 
             if (rows != 1) {
-                throw new IllegalStateException("Wrong number of updated rows! " + rows + "\nID: " + id);
+                throw new IllegalStateException("Wrong number of deleted rows! " + rows + "\nID: " + id);
             }
-            preparedStatement.close();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
     public boolean dropTable(String tableName) {
-        String dropTable = "DROP TABLE IF EXISTS " + tableName;
-        boolean rows = true;
+        String dropTable = "DROP TABLE IF EXISTS \"" + tableName + "\"";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(dropTable)) {
-
-            int row = preparedStatement.executeUpdate();
-            rows = preparedStatement.execute();
-
-            if( rows) {
-                System.out.printf("Table " + tableName + " where dropped.\t " + row + " where deleted");
-            }
-            preparedStatement.close();
+            preparedStatement.execute();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (!rows) {
-            throw new IllegalStateException("No table found by the name of... ´" + tableName + "´\nTablename: " + dropTable);
-        }
+
         return false;
     }
 
